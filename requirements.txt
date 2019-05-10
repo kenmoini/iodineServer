@@ -1,0 +1,8 @@
+python-daemon
+setuptools
+wheel
+flask
+flask-jsonpify
+flask-sqlalchemy
+flask-restful
+numpy

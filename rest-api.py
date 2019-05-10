@@ -6,23 +6,29 @@ import time
 import logging
 import atexit
 import xalglib
-from xmlrpc.server import SimpleXMLRPCServer
-from xmlrpc.server import SimpleXMLRPCRequestHandler
+import numpy as np
+import json
+
+from flask import Flask, request, jsonify
+from flask_restful import Resource, Api
+from sqlalchemy import create_engine
 from daemon import runner
 from array import *
 
-# Functions Listed here
 def check_file_writable(fnm):
     if os.path.exists(fnm):
         # path exists
         if os.path.isfile(fnm): # is it a file or a dir?
             # also works when file is a link and the target is writable
             return os.access(fnm, os.W_OK)
+        elif os.path.isDirectory(fnm):
+            return os.access(fnm, os.W_OK)
         else:
             return False # path is a dir, so cannot write as a file
+
+
     # target does not exist, check perms on parent dir
-    pdir = os.path.dirname(fnm)
-    if not pdir: pdir = '.'
+    pdir = '.'
     # target is creatable if parent dir is writable
     return os.access(pdir, os.W_OK)
 
@@ -40,17 +46,12 @@ def findBasePath():
     elif check_file_writable('./.iodineServer.pid'):
         basePath = str('./')
     else:
-        print >> sys.stderr, "[Iodine Server][ERROR] PID locations not writable!"
+        #print >> sys.stderr, "[Iodine Server][ERROR] PID locations not writable!"
         logging.info('[Iodine Server][ERROR] PID locations not writable!')
         sys.exit(1)
     #sys.stdout.write(str('[Iodine Server][INFO] Base Path: ' + basePath) + '\n')
     logging.info('[Iodine Server][INFO] Base Path: ' + basePath)
     return basePath
-
-# Function: uptime - Returns system uptime
-def uptime():
-    uptime_seconds = open('/proc/uptime').read()
-    return float(uptime_seconds.split()[0])/3600.0
 
 # Register a function under a different name
 #def compute_function(rNo3,rNh4,rP,rK,rMg,rCa,rS,rFe,rZn,rB,rMn,rCu,rMo,rNa,rSi,rCl,lAS,rAS):
@@ -93,9 +94,35 @@ def compute_function(lAS,rAS):
     info, rep, rx = xalglib.rmatrixsolvels(lAS, nrows, ncols, rAS, threshold)
     return [info, rep, rx]
 
-# Restrict to a particular path.
-class RequestHandler(SimpleXMLRPCRequestHandler):
-    rpc_paths = ('/iodineRPC2',)
+class Uptime(Resource):
+    def get(self):
+        uptime_seconds = open('/proc/uptime').read()
+        # Return time in hours
+        return {'uptime': float(uptime_seconds.split()[0])/3600.0 }
+
+class ComputeFertilizer(Resource):
+    def post(self):
+        if request.method == 'POST':
+            #problem_matrix_left = formulations
+            pml_w, pml_h = 16, 16
+            #problem_matrix_left = [[0 for x in range(pml_w)] for y in range(pml_h)]
+            #problem_matrix_left = [[38.016,0,0,0,0,0,29.04,36.3,0,0,0,0,0,0,0,0],[2.904,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,69.12576,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,52.8,0,0,0,70.126848,0,121.44,0,0,0,0,0,0,0,0],[0,0,25.08,0,0,0,25.344,0,0,0,0,0,0,0,0,0],[50.16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,26.4,19.8,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,11.88,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,3.564,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,21.12,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,6.072,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0.1056,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,65.16576,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+            problem_matrix_left = request.form.getlist('formulations')
+
+            #problem_matrix_right = intended concentrations
+            #problem_matrix_right = [0 for x in range(16)]
+            #problem_matrix_right = [99.44,4.534,60,100,60,110.315,0,4.633,1.187,0.356,2.111,0.597,0.011,0,46.75,0]
+            problem_matrix_right = request.form.get('target_concentration')
+            problem_matrix_right = problem_matrix_right.split(',')
+            #logging.error('[Iodine Server][INFO] Left: ' + problem_matrix_left)
+            #logging.error('[Iodine Server][INFO] right: ' + problem_matrix_right)
+
+            #response = jsonify(compute_function(problem_matrix_left, problem_matrix_right))
+            info, rep, rx = compute_function(problem_matrix_left, problem_matrix_right)
+            #response = compute_function(request.form['formulations'], request.form['target_concentration'])
+            response = jsonify({'info': str(info), 'rep': str(rep), 'rx': str(rx)})
+            return response
+
 
 class Server():
     def __init__(self):
@@ -112,7 +139,7 @@ class Server():
             logging.basicConfig(level=logging.DEBUG,
                             format='%(asctime)s %(levelname)s %(message)s',
                             filename=self.log_file,
-                            filemode='a')
+                            filemode='wb')
         while True:
             # the main loop code.
             try:
@@ -120,18 +147,20 @@ class Server():
                 if self.foreground:
                     print('Running as stand-alone, please run as service daemon')
                 else:
-                    logging.info('[Iodine Server][INFO] Starting Server at port 2082')
 
-                    self.server = SimpleXMLRPCServer(("localhost", 2082), requestHandler=RequestHandler)
-                    self.server.register_introspection_functions()
+                    logging.info('[Iodine Server][INFO] Starting Server at port 5002')
+
+                    app = Flask('iodine-rest-api')
+                    api = Api(app)
+
                     # Register functions
-                    self.server.register_function(uptime)
+                    api.add_resource(Uptime, '/uptime')
                     logging.info('[Iodine Server][INFO] Registered Uptime function')
-                    self.server.register_function(compute_function, 'computeFertilizer')
+
+                    api.add_resource(ComputeFertilizer, '/compute_fertilizer')
                     logging.info('[Iodine Server][INFO] Registered computeFertilizer function')
-                    #self.server.register_function(users)
-                    #self.server.register_function(processes)
-                    self.server.serve_forever()
+
+                    app.run(port='5002',debug=True)
 
             except:
                 logging.info(sys.exc_info())
@@ -139,7 +168,6 @@ class Server():
                 sys.exit(1)
 
 
-#
 # An example extension of runner.DaemonRunner class of python-daemon.
 # Improvement points are:
 #   - Natual unix getopt style option.
@@ -215,8 +243,6 @@ class MyDaemonRunner(runner.DaemonRunner):
     # FYI: The original parse_args() in runner.DaemonRunner class.
     #
     def original_parse_args(self, argv=None):
-        """ Parse command-line arguments.
-            """
         if argv is None:
             argv = sys.argv
 
@@ -227,9 +253,9 @@ class MyDaemonRunner(runner.DaemonRunner):
         self.action = argv[1]
         if self.action not in self.action_funcs:
             self._usage_exit(argv)
-#
-#
-#
+
+# Run Main Program
+
 if __name__ == '__main__':
     #app = App()
     app = Server()

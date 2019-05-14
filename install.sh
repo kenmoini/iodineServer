@@ -6,12 +6,12 @@
 # Switch between distributions
 if [ -x "$(command -v yum)" ]; then
   # This is a CentOS/RHEL distro
-  yum install python3 wget git pip3 -y
+  yum install python3 wget git python3-pip -y
 fi
 if [ -x "$(command -v apt)" ]; then
   # This is a Debian/Ubuntu distro
   # Pull in Python3 Virtual Environment packages
-  apt-get install python3 wget git pip3 -y
+  apt-get install python3 wget git python3-pip -y
 fi
 
 pip3 install -r requirements.txt

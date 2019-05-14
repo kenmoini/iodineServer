@@ -22,6 +22,6 @@ unzip -o alglib-*.zip
 
 cd cpython && python3 ./setup.py install
 
-cd .. && rm -rf cpython && rm -rf alglib-*.zip
+cd .. && rm -rf alglib-*.zip
 
 echo 'Now just run: python3 ./rest-api.py -s'

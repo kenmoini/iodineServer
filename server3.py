@@ -1,5 +1,5 @@
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
-#!/usr/bin/python
+#!/usr/bin/env python3
 import os
 import sys
 import time

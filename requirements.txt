@@ -1,4 +1,4 @@
-python-daemon-3k
+python-daemon
 setuptools
 wheel
 flask

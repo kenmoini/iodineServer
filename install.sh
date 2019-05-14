@@ -6,12 +6,12 @@
 # Switch between distributions
 if [ -x "$(command -v yum)" ]; then
   # This is a CentOS/RHEL distro
-  yum install python3 wget git python3-pip -y
+  yum install python2.7 wget git python2.7-pip -y
 fi
 if [ -x "$(command -v apt)" ]; then
   # This is a Debian/Ubuntu distro
   # Pull in Python3 Virtual Environment packages
-  apt-get install python3 wget git python3-pip -y
+  apt-get install python2.7 wget git python2.7-pip -y
 fi
 
 pip3 install -r requirements.txt
@@ -20,8 +20,11 @@ wget http://www.alglib.net/translator/re/alglib-3.15.0.cpython.free.zip
 
 unzip -o alglib-*.zip
 
-cd cpython && python3 ./setup.py install
+cd cpython && python ./setup.py install
 
 cd .. && rm -rf alglib-*.zip
 
-echo 'Now just run: python3 ./rest-api.py -s'
+echo "\n\n"
+echo 'Now just run: python ./check.py'
+echo 'or'
+echo 'python ./xmlrpc-server.py -s'

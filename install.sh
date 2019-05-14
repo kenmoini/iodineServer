@@ -24,7 +24,7 @@ cd cpython && python ./setup.py install
 
 cd .. && rm -rf alglib-*.zip
 
-echo "\n\n"
+echo ""
 echo 'Now just run: python ./check.py'
 echo 'or'
 echo 'python ./xmlrpc-server.py -s'

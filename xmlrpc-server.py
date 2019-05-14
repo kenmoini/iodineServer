@@ -38,9 +38,9 @@ def check_file_writable(fnm):
 def findBasePath():
     # Check to see if we can write a PID file somewhere
     if check_file_writable('./.iodineServer.pid'):
-        basePath = str('./')
+        basePath = str(os.path.dirname(os.path.abspath(__file__)))
     elif check_file_writable('~/.iodineServer.pid'):
-        basePath = str('~/')
+        basePath = str(os.path.dirname(os.path.abspath('~/')))
     elif check_file_writable('/var/tmp/iodineServer.pid'):
         basePath = str('/var/tmp/')
     elif check_file_writable('/tmp/iodineServer.pid'):

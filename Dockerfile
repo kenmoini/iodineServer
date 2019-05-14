@@ -13,6 +13,7 @@ RUN groupadd -r iodine && useradd --no-log-init -r -g iodine iodine
 
 WORKDIR /opt
 RUN git clone https://github.com/kenmoini/iodineServer.git
+RUN chown -R iodine:iodine /opt/iodineServer
 
 WORKDIR /opt/iodineServer
 RUN ./install.sh
@@ -20,5 +21,5 @@ RUN ./install.sh
 USER iodine
 
 EXPOSE 2082
-
-CMD ["python" "/opt/iodineServer/xmlrpc-server.py -s"]
+WORKDIR /opt/iodineServer
+CMD ["python" "./xmlrpc-server.py -s"]

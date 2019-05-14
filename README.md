@@ -1,5 +1,5 @@
 # iodineServer
-Iodine - An application that serves the computation needs of Salt Smarts
+Iodine - An application that serves the Linear Algebraic computation needs of Salt Smarts via an XML-RPC endpoint.
 
 ## Introduction
 Iodine is the name of the server application that processes fertilizer computation formulae sent from the Salt Smarts platform.

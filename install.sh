@@ -6,12 +6,12 @@
 # Switch between distributions
 if [ -x "$(command -v yum)" ]; then
   # This is a CentOS/RHEL distro
-  yum install python2.7 wget git python-pip -y
+  yum install python2.7 wget git python-pip supervisor -y
 fi
 if [ -x "$(command -v apt)" ]; then
   # This is a Debian/Ubuntu distro
   # Pull in Python3 Virtual Environment packages
-  apt-get install python2.7 wget git python-pip -y
+  apt-get install python2.7 wget git python-pip supervisor -y
 fi
 
 pip3 install -r requirements.txt

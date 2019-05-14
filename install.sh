@@ -14,6 +14,8 @@ if [ -x "$(command -v apt)" ]; then
   apt-get install python2.7 wget git python-pip supervisor -y
 fi
 
+mkdir -p /etc/supervisor/conf.d/
+
 pip3 install -r requirements.txt
 
 wget http://www.alglib.net/translator/re/alglib-3.15.0.cpython.free.zip

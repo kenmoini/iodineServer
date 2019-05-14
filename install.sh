@@ -21,19 +21,22 @@ fi
 
 echo ""
 echo "//=========================================================="
-echo "  Creating supervisord conf.d directory if it doesn't exist"
+echo "  Creating directories if needed..."
 echo "//=========================================================="
 mkdir -p /etc/supervisor/conf.d/
+mkdir -p /var/run/iodineServer/
+chown iodine:iodine /var/run/iodineServer/
+chmod 775 /var/run/iodineServer/
 
 echo ""
 echo "//=========================================================="
-echo "  Installing pip modules"
+echo "  Installing pip modules..."
 echo "//=========================================================="
 pip install -r requirements.txt
 
 echo ""
 echo "//=========================================================="
-echo "  Getting AlgLib 3.15 CPython Library"
+echo "  Getting AlgLib 3.15 CPython Library..."
 echo "//=========================================================="
 wget http://www.alglib.net/translator/re/alglib-3.15.0.cpython.free.zip
 
@@ -61,7 +64,7 @@ echo "//=========================================================="
 python ./xmlrpc-server.py -s
 echo ""
 echo "//=========================================================="
-echo "  Running tests"
+echo "  Running tests..."
 echo "//=========================================================="
 python ./check.py
 echo ""

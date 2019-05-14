@@ -16,7 +16,7 @@ fi
 
 mkdir -p /etc/supervisor/conf.d/
 
-pip3 install -r requirements.txt
+pip install -r requirements.txt
 
 wget http://www.alglib.net/translator/re/alglib-3.15.0.cpython.free.zip
 
@@ -26,7 +26,22 @@ cd cpython && python ./setup.py install
 
 cd .. && rm -rf alglib-*.zip
 
+echo "//=========================================================="
+echo "  Starting server for tests... python ./xmlrpc-server.py-s"
+echo "//=========================================================="
+python ./xmlrpc-server.py -s
 echo ""
-echo 'Now just run: python ./check.py'
+echo "//=========================================================="
+echo "  Running tests"
+echo "//=========================================================="
+python ./check.py
+echo ""
+echo "//=========================================================="
+echo "  Stopping server for tests... python ./check.py"
+echo "//=========================================================="
+python ./xmlrpc-server.py -k
+echo ""
+echo "//=========================================================="
+echo 'Now just run: python ./xmlrpc-server.py -s'
 echo 'or'
-echo 'python ./xmlrpc-server.py -s'
+echo 'python ./check.py'

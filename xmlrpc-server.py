@@ -29,8 +29,6 @@ def check_file_writable(fnm):
             return os.access(fnm, os.W_OK)
         else:
             return False # path is a dir, so cannot write as a file
-
-
     # target does not exist, check perms on parent dir
     pdir = '.'
     # target is creatable if parent dir is writable
@@ -39,16 +37,16 @@ def check_file_writable(fnm):
 # Function: findBasePath
 def findBasePath():
     # Check to see if we can write a PID file somewhere
-    if check_file_writable('/var/run/iodineServer.pid'):
-        basePath = str('/var/run/')
+    if check_file_writable('./.iodineServer.pid'):
+        basePath = str('./')
     elif check_file_writable('~/.iodineServer.pid'):
         basePath = str('~/')
     elif check_file_writable('/var/tmp/iodineServer.pid'):
         basePath = str('/var/tmp/')
     elif check_file_writable('/tmp/iodineServer.pid'):
         basePath = str('/tmp/')
-    elif check_file_writable('./.iodineServer.pid'):
-        basePath = str('./')
+    elif check_file_writable('/var/run/iodineServer.pid'):
+        basePath = str('/var/run/')
     else:
         #print >> sys.stderr, "[Iodine Server][ERROR] PID locations not writable!"
         logging.info('[Iodine Server][ERROR] PID locations not writable!')

@@ -6,30 +6,45 @@ Iodine is the name of the server application that processes fertilizer computati
 
 It is a simple XML RPC server written in Python that extends the CPython build of the AlgLib library [http://www.alglib.net/]
 
-There is a Laravel Lumen RESTful API written on top of that Python XML RPC endpoint to extend functionality out in a more flexible platform. This RESTful API is called Sodium.
+There is a Laravel Lumen RESTful API written on top of this Python XML RPC endpoint to extend functionality out in a more flexible platform. This RESTful API is called Sodium.
 
-## Installation
-1. First thing first, clone this repo down
-2. Next, you'll want to download a copy of the CPython build of AlgLib, currently versioned at 3.14.0 as of this date.  Find the link here: [http://www.alglib.net/download.php]
-3. Extract the file, you'll be left with a 'cpython' folder; move that folder into the root repo folder you just cloned.
-4. Build the AlgLib CPython implimentation by running:
+Iodine is deployed/installed easily via a Bash script, Dockerfile, or Jenkinsfile, with an available Supervisord configuration file in order to provide on-boot starting of the Iodine Server as well as monitoring of the process.
+
+## Requirements
+Ideally this should be deployed in a small VPS/VM, or in a container.  There is a **Dockerfile** that will create a container with this running, as well as a **Jenkinsfile** for inclusion into a CI/CD pipeline with **Red Hat OpenShift**.
+
+Otherwise, this will require...
+- Debian/Ubuntu, or RHEL/CentOS/Fedora
+- Python 2.7 (EW!)
+
+## Installation (as root/sudoer)
+1. First thing first, clone this repo down:
 ```
-cd cpython
-sudo python3 ./setup.py install
+root@localhost:~# git clone https://github.com/kenmoini/iodineServer.git
 ```
-This will compile and build the AlgLib library and install it system-wide.
-5. Next, install the python-daemon module with...
+2. Next, you'll just need to run the **install.sh** file:
 ```
-sudo pip3 install python-daemon
+root@localhost:~# cd iodineServer
+root@localhost:~/iodineServer# ./install.sh
 ```
-6. Start the Iodine XML RPC Server by running...
+3. You can run a quick test...
 ```
-sudo python3 ./server3.py -s
+root@localhost:~/iodineServer# python ./check.py
+```
+4. And then run the server!
+```
+root@localhost:~/iodineServer# python ./xmlrpc-server.py
 ```
 
 ## Tests
-There is a simple connection test file included, check.py, that checks for proper AlgLib CPython import and a basic uptime RPC test
+There is a simple connection test file included, **check.py**, that checks for proper AlgLib CPython import, a basic uptime RPC test, as well as a verified fertilizer computation test.
+
+## Notes
+* This requires Python 2.7...there are additional scripts in this repo that have been attempts at modernizing to Python 3 and RESTful APIs instead of the XML-RPC layer, but I'm not the best Python programmer...open-source community...halp?
+* To start this Iodine Server 
 
 ## TODO
 * Still need to add Co to the computation grid...
 * Ken, whatever you're thinking, don't include oxides and other bonds in the computation grid...convert oxides into available forms before sending to XML RPC, otherwise molecular composition will be different
+* Attempt moving to Python 3 again...
+* Integrate AlgLib directly with Flask REST API module, but AlgLib doesn't like how data is passed...

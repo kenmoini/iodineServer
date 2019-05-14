@@ -37,16 +37,16 @@ def check_file_writable(fnm):
 # Function: findBasePath
 def findBasePath():
     # Check to see if we can write a PID file somewhere
-    if check_file_writable('./.iodineServer.pid'):
-        basePath = str(os.path.dirname(os.path.abspath(__file__)))
+    if check_file_writable('/var/run/iodineServer/iodineServer.pid'):
+        basePath = str('/var/run/iodineServer/')
     elif check_file_writable('~/.iodineServer.pid'):
         basePath = str(os.path.dirname(os.path.abspath('~/')))
     elif check_file_writable('/var/tmp/iodineServer.pid'):
         basePath = str('/var/tmp/')
     elif check_file_writable('/tmp/iodineServer.pid'):
         basePath = str('/tmp/')
-    elif check_file_writable('/var/run/iodineServer.pid'):
-        basePath = str('/var/run/')
+    elif check_file_writable('./.iodineServer.pid'):
+        basePath = str(os.path.dirname(os.path.abspath(__file__)))
     else:
         #print >> sys.stderr, "[Iodine Server][ERROR] PID locations not writable!"
         logging.info('[Iodine Server][ERROR] PID locations not writable!')

@@ -130,6 +130,13 @@ def compute_function(lAS,rAS):
 #            response = jsonify({'info': str(info), 'rep': str(rep), 'rx': str(rx)})
 #            return response
 
+# Define atexit function
+def all_done():
+    basePath = findBasePath()
+    os.remove(basePath + 'iodine_daemon-stdout.log')
+    os.remove(basePath + 'iodine_daemon-stderr.log')
+    os.remove(basePath + 'iodine_daemon.pid')
+
 # Restrict to a particular path.
 class RequestHandler(SimpleXMLRPCRequestHandler):
     rpc_paths = ('/iodineRPC2',)
@@ -177,6 +184,7 @@ class Server():
                 #logging.info('[Iodine Server][INFO] Registered computeFertilizer function')
                 #self.server.register_function(users)
                 #self.server.register_function(processes)
+                atexit.register(all_done)
                 self.server.serve_forever()
 
             except:

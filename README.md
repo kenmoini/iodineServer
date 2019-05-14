@@ -33,7 +33,7 @@ root@localhost:/opt/iodineServer# python ./check.py
 ```
 4. And then run the server!
 ```
-root@localhost:/opt/iodineServer# python ./xmlrpc-server.py
+root@localhost:/opt/iodineServer# python ./xmlrpc-server.py -s
 ```
 5. (Optional) Install Supervisord Configuration
 The **install.sh** script installs Supervisord but you still need to move the configuration, and maybe modify it if you did not clone this repo into your /opt directory.

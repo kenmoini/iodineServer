@@ -18,22 +18,27 @@ Otherwise, this will require...
 - Python 2.7 (EW!)
 
 ## Installation (as root/sudoer)
-1. First thing first, clone this repo down:
+1. First thing first, clone this repo down - ideally do so under /opt so that the Supervisor configuration works without modifcation:
 ```
-root@localhost:~# git clone https://github.com/kenmoini/iodineServer.git
+root@localhost:/opt# git clone https://github.com/kenmoini/iodineServer.git
 ```
 2. Next, you'll just need to run the **install.sh** file:
 ```
-root@localhost:~# cd iodineServer
-root@localhost:~/iodineServer# ./install.sh
+root@localhost:/opt# cd iodineServer
+root@localhost:/opt/iodineServer# ./install.sh
 ```
 3. You can run a quick test...
 ```
-root@localhost:~/iodineServer# python ./check.py
+root@localhost:/opt/iodineServer# python ./check.py
 ```
 4. And then run the server!
 ```
-root@localhost:~/iodineServer# python ./xmlrpc-server.py
+root@localhost:/opt/iodineServer# python ./xmlrpc-server.py
+```
+5. (Optional) Install Supervisord Configuration
+The **install.sh** script installs Supervisord but you still need to move the configuration, and maybe modify it if you did not clone this repo into your /opt directory.
+```
+root@localhost:/opt/iodineServer# cp iodine-supervisord.conf /etc/supervisor/conf.d/
 ```
 
 ## Tests

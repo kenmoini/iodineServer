@@ -38,7 +38,7 @@ echo ""
 echo "//=========================================================="
 echo "  Getting AlgLib 3.15 CPython Library..."
 echo "//=========================================================="
-wget http://www.alglib.net/translator/re/alglib-3.15.0.cpython.free.zip
+wget http://www.alglib.net/translator/re/alglib-3.16.0.cpython.free.zip
 
 echo ""
 echo "//=========================================================="
